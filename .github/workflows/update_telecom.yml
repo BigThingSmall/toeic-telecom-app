@@ -1,0 +1,28 @@
+name: Cập nhật kiến thức Viễn thông & TOEIC
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Lấy code
+        uses: actions/checkout@v4
+      - name: Cài Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Cài thư viện
+        run: pip install feedparser
+      - name: Chạy script cập nhật
+        run: python auto_updater.py
+      - name: Commit và push nếu có thay đổi
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          git add flashcards.json
+          git commit -m "Tự động cập nhật kiến thức mới" || echo "Không có thay đổi"
+          git push

@@ -1,0 +1,1 @@
+print("Updater script is ready. Will fetch news later.")
