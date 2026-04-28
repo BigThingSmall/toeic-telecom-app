@@ -1,0 +1,62 @@
+[
+  {
+    "word": "What Anthropic’s Mythos Means for the Future of Cy",
+    "meaning": "IEEE Spectrum",
+    "example": "Two weeks ago, Anthropic announced that its new model, Claude Mythos Preview, can autonomously find and weaponize software vulnerabilities, turning them into working exploits without expert guidance. "
+  },
+  {
+    "word": "This Roboticist-Turned-Teacher Built a Life-Size R",
+    "meaning": "IEEE Spectrum",
+    "example": "Tom Burick has always considered himself a builder. Over the years he’s designed robots, constructed a vintage teardrop trailer, and most recently, led a group of students in building a full-scale rep"
+  },
+  {
+    "word": "Reviving Teletext for Ham Radio",
+    "meaning": "IEEE Spectrum",
+    "example": "Once upon a time in Europe, television remote controls had a magic teletext button. Years before the internet stole into homes, pressing that button brought up teletext digital information services wi"
+  },
+  {
+    "word": "Opinion: US superintelligence is dumb",
+    "meaning": "Fierce Telecom",
+    "example": "ML, LLMs and chatbots - the sum of these parts does not a superintelligence make. Best case, it leads to a very expensive, very power-hungry Magic Eight Ball the size of a small moon."
+  },
+  {
+    "word": "Tower co Vertical Bridge gets $1.5B boost from KKR",
+    "meaning": "Fierce Telecom",
+    "example": "“This transaction provides us with the resources to continue developing our portfolio at scale,\" Vertical Bridge CEO Ron Bizick said."
+  },
+  {
+    "word": "2026 M&amp;A tracker — TDS Telecom and GCI acquire",
+    "meaning": "Fierce Telecom",
+    "example": "It's increasingly difficult to stay on top of the ever-changing business landscape the underpins the telecom and tech industries. We're here to help!"
+  },
+  {
+    "word": "A new way to deliver faster, greener wireless conn",
+    "meaning": "TechXplore Telecom",
+    "example": "Modern life depends on fast and reliable wireless connections. Video calls, streaming services, virtual reality, and smart devices all place growing demands on networks that already serve billions of "
+  },
+  {
+    "word": "New fiber optic data transmission speed record",
+    "meaning": "TechXplore Telecom",
+    "example": "A new data transmission speed record of 450 terabits per second using an existing, commercially installed optical fiber link has been set by a team of engineers involving UCL researchers. The achievem"
+  },
+  {
+    "word": "Chip-scale light technology could power faster AI ",
+    "meaning": "TechXplore Telecom",
+    "example": "Researchers at Trinity have developed a new light-based technology on a tiny chip that could help make the data centers behind cloud computing, artificial intelligence, and global internet services fa"
+  },
+  {
+    "word": "bandwidth",
+    "meaning": "băng thông",
+    "example": "5G needs high bandwidth."
+  },
+  {
+    "word": "latency",
+    "meaning": "độ trễ",
+    "example": "Low latency for real-time control."
+  },
+  {
+    "word": "throughput",
+    "meaning": "thông lượng",
+    "example": "Throughput measured in Mbps."
+  }
+]

@@ -7,6 +7,7 @@ from card_data import save_cards
 
 def translate_text(text):
     try:
+        text = text[:300]
         text_encoded = urllib.parse.quote(text)
         url = (
             f"https://translate.googleapis.com/translate_a/single"
@@ -15,8 +16,7 @@ def translate_text(text):
         req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
         with urllib.request.urlopen(req, timeout=5) as response:
             result = json.loads(response.read())
-            translated = "".join([item[0] for item in result[0] if item[0]])
-            return translated
+            return "".join([item[0] for item in result[0] if item[0]])
     except Exception as ex:
         return f"❌ Lỗi: {ex}"
 
@@ -25,51 +25,45 @@ def show_flashcards(page: ft.Page, cards, current_index, word_display, meaning_d
                     word_input, meaning_input, example_input, update_display_callback, show_telecom):
     page.controls.clear()
 
-    # ── Khung dịch ──
-    translate_input = ft.TextField(
-        label="✏️ Nhập hoặc paste từ/câu muốn dịch",
-        width=600,
-        hint_text="Bôi đen text → Ctrl+C → click vào đây → Ctrl+V → bấm Dịch",
+    # Ô nhập ẩn + kết quả dịch - gọn nhẹ
+    quick_input = ft.TextField(
+        hint_text="Bôi đen → Ctrl+C → Ctrl+V vào đây → Enter",
+        border_radius=8,
+        expand=True,
+        on_submit=lambda e: do_translate(e),  # Bấm Enter để dịch
+        dense=True,
     )
-    translation_result = ft.Text("", size=18, color=ft.Colors.GREEN_800, selectable=True)
+    result_text = ft.Text("", size=15, color=ft.Colors.GREEN_800, selectable=True, visible=False)
 
     def do_translate(e):
-        text = translate_input.value.strip()
+        text = quick_input.value.strip()
         if not text:
-            translation_result.value = "⚠️ Chưa nhập gì!"
-            translation_result.color = ft.Colors.ORANGE_700
-            page.update()
             return
-        translation_result.value = "⏳ Đang dịch..."
-        translation_result.color = ft.Colors.GREY_500
+        result_text.value = "⏳..."
+        result_text.visible = True
         page.update()
-        result = translate_text(text)
-        translation_result.value = f"📖 {result}"
-        translation_result.color = ft.Colors.GREEN_800
+        result_text.value = translate_text(text)
+        quick_input.value = ""
         page.update()
 
-    translate_box = ft.Container(
-        content=ft.Column([
-            ft.Text("🔍 Tra dịch nhanh", size=16, weight=ft.FontWeight.W_600, color=ft.Colors.BLUE_900),
-            ft.Row(
-                [translate_input,
-                 ft.ElevatedButton(
-                     "🌐 Dịch",
-                     on_click=do_translate,
-                     style=ft.ButtonStyle(bgcolor=ft.Colors.BLUE_700, color=ft.Colors.WHITE),
-                 )],
-                alignment=ft.MainAxisAlignment.CENTER,
+    mini_translate_bar = ft.Container(
+        content=ft.Row([
+            ft.Text("🌐", size=16),
+            quick_input,
+            ft.IconButton(
+                icon=ft.Icons.SEND_ROUNDED,
+                icon_color=ft.Colors.BLUE_600,
+                tooltip="Dịch (hoặc bấm Enter)",
+                on_click=do_translate,
             ),
-            translation_result,
-        ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=8),
-        padding=16,
-        bgcolor=ft.Colors.BLUE_50,
-        border_radius=12,
-        border=ft.border.all(1, ft.Colors.BLUE_200),
-        width=700,
+        ], spacing=6, vertical_alignment=ft.CrossAxisAlignment.CENTER),
+        padding=ft.padding.symmetric(horizontal=12, vertical=6),
+        bgcolor=ft.Colors.WHITE,
+        border_radius=10,
+        border=ft.border.all(1, ft.Colors.BLUE_100),
+        expand=True,
     )
 
-    # ── Card (bọc SelectionArea để bôi đen được) ──
     card_container = ft.Container(
         content=ft.SelectionArea(
             content=ft.Column([
@@ -87,50 +81,54 @@ def show_flashcards(page: ft.Page, cards, current_index, word_display, meaning_d
         expand=True,
     )
 
+    def go_prev(e):
+        result_text.visible = False
+        quick_input.value = ""
+        prev_click(e, page, cards, current_index, word_display, meaning_display,
+                   example_display, update_display_callback)
+
+    def go_next(e):
+        result_text.visible = False
+        quick_input.value = ""
+        next_click(e, page, cards, current_index, word_display, meaning_display,
+                   example_display, update_display_callback)
+
     nav_buttons = ft.Row([
-        ft.ElevatedButton(
-            "◀",
-            on_click=lambda e: prev_click(e, page, cards, current_index, word_display, meaning_display, example_display, update_display_callback),
-            style=ft.ButtonStyle(shape=ft.CircleBorder()),
-        ),
-        ft.ElevatedButton(
-            "▶",
-            on_click=lambda e: next_click(e, page, cards, current_index, word_display, meaning_display, example_display, update_display_callback),
-            style=ft.ButtonStyle(shape=ft.CircleBorder()),
-        ),
+        ft.ElevatedButton("◀", on_click=go_prev, style=ft.ButtonStyle(shape=ft.CircleBorder())),
+        ft.ElevatedButton("▶", on_click=go_next, style=ft.ButtonStyle(shape=ft.CircleBorder())),
     ], alignment=ft.MainAxisAlignment.CENTER, spacing=40)
 
     add_form = ft.Column([
-        word_input,
-        meaning_input,
-        example_input,
-        ft.ElevatedButton(
-            "Add Flashcard",
-            on_click=lambda e: add_click(e, page, cards, current_index, word_display, meaning_display,
-                                          example_display, word_input, meaning_input, example_input, update_display_callback),
-        ),
+        word_input, meaning_input, example_input,
+        ft.ElevatedButton("Add Flashcard",
+                          on_click=lambda e: add_click(e, page, cards, current_index, word_display,
+                                                        meaning_display, example_display, word_input,
+                                                        meaning_input, example_input, update_display_callback)),
     ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=10)
 
     telecom_btn = ft.ElevatedButton(
         "📡 Telecom Playground",
         on_click=lambda e: show_telecom(page, cards, current_index, word_display, meaning_display,
-                                         example_display, word_input, meaning_input, example_input, update_display_callback),
+                                         example_display, word_input, meaning_input, example_input,
+                                         update_display_callback),
     )
 
     page.add(
         ft.Column([
             ft.Container(height=10),
-            ft.Text("📚 TOEIC 800 - Telecom Vocabulary", size=24, weight=ft.FontWeight.BOLD, color=ft.Colors.BLUE_900),
+            ft.Text("📚 TOEIC 800 - Telecom Vocabulary", size=24,
+                    weight=ft.FontWeight.BOLD, color=ft.Colors.BLUE_900),
             telecom_btn,
             ft.Divider(height=10),
             card_container,
+            # Thanh dịch gọn ngay dưới card
+            mini_translate_bar,
+            result_text,
             nav_buttons,
-            ft.Divider(height=10),
-            translate_box,        # ← Khung dịch ngay dưới nút điều hướng
             ft.Divider(height=20),
             ft.Text("➕ Add your own word", size=18, weight=ft.FontWeight.W_500),
             add_form,
-        ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=20)
+        ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=10)
     )
     page.update()
 
